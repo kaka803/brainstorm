@@ -87,7 +87,7 @@ export default function ContactPage() {
             
             {/* Card 1: Direct Phone */}
             <a
-              href="tel:+924235880000"
+              href="tel:+923332556206"
               className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-xs card-lift hover:border-[#E85D04] group block"
             >
               <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl mb-4 group-hover:bg-[#E85D04] group-hover:text-white transition-all shadow-xs">
@@ -97,7 +97,7 @@ export default function ContactPage() {
                 Direct Operations Line
               </div>
               <div className="text-base font-extrabold text-slate-900 group-hover:text-[#E85D04] transition-colors">
-                +92 42 35880000
+                +92 333 2556206
               </div>
               <div className="text-xs text-slate-500 mt-2 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
@@ -107,7 +107,7 @@ export default function ContactPage() {
 
             {/* Card 2: Official Email */}
             <a
-              href="mailto:info@brainstormcommunications.org"
+              href="mailto:brainstromcommunication@gmail.com"
               className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-xs card-lift hover:border-[#E85D04] group block"
             >
               <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl mb-4 group-hover:bg-[#E85D04] group-hover:text-white transition-all shadow-xs">
@@ -117,7 +117,7 @@ export default function ContactPage() {
                 Official Business Email
               </div>
               <div className="text-sm font-extrabold text-slate-900 group-hover:text-[#E85D04] transition-colors truncate">
-                info@brainstormcommunications.org
+                brainstromcommunication@gmail.com
               </div>
               <div className="text-xs text-slate-500 mt-2">
                 &lt; 2-Hour Response Time
@@ -394,11 +394,11 @@ export default function ContactPage() {
                   Call or chat directly with our offshore coordinator in Lahore for immediate scoping, custom quotations, or urgent telemarketing ramp-ups.
                 </p>
                 <a
-                  href="tel:+924235880000"
+                  href="tel:+923332556206"
                   className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors"
                 >
                   <i className="fa-solid fa-phone text-orange-400"></i>
-                  <span>Call +92 42 35880000</span>
+                  <span>Call +92 333 2556206</span>
                 </a>
               </div>
 
@@ -480,8 +480,8 @@ export default function ContactPage() {
               Thank you for reaching out to Brainstorm Communications. An executive operations lead at our Lahore center is reviewing your project requirements and will reply within 2 business hours.
             </p>
             <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 text-xs text-slate-700 text-left space-y-1">
-              <div><strong className="text-slate-900">Urgent Assistance:</strong> +92 42 35880000</div>
-              <div><strong className="text-slate-900">Direct Desk:</strong> info@brainstormcommunications.org</div>
+              <div><strong className="text-slate-900">Urgent Assistance:</strong> +92 333 2556206</div>
+              <div><strong className="text-slate-900">Direct Desk:</strong> brainstromcommunication@gmail.com</div>
             </div>
             <button
               type="button"
