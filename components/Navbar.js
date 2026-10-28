@@ -21,11 +21,11 @@ export default function Navbar() {
       <div className="bg-slate-900 text-slate-300 text-xs py-2.5 px-4 relative z-50 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-slate-300">
-            <a href="tel:+924235880000" className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <i className="fa-solid fa-phone text-[#E85D04]"></i> +92 42 35880000
+            <a href="tel:+923332556206" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <i className="fa-solid fa-phone text-[#E85D04]"></i> +92 333 2556206
             </a>
-            <a href="mailto:info@brainstormcommunications.org" className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <i className="fa-solid fa-envelope text-[#E85D04]"></i> info@brainstormcommunications.org
+            <a href="mailto:brainstromcommunication@gmail.com" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <i className="fa-solid fa-envelope text-[#E85D04]"></i> brainstromcommunication@gmail.com
             </a>
             <span className="hidden sm:flex items-center gap-1.5 text-slate-400">
               <i className="fa-solid fa-location-dot text-[#E85D04]"></i> Lahore, Pakistan
