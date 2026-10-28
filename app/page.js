@@ -1129,7 +1129,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-slate-900 font-bold text-sm">Direct Phone</h4>
-                    <p className="text-slate-600 text-xs mt-1">+92 42 35880000</p>
+                    <a href="tel:+923332556206" className="text-slate-600 hover:text-[#E85D04] text-xs mt-1 block transition-colors">+92 333 2556206</a>
                   </div>
                 </div>
 
@@ -1139,7 +1139,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-slate-900 font-bold text-sm">Email Address</h4>
-                    <p className="text-slate-600 text-xs mt-1">info@brainstormcommunications.org</p>
+                    <a href="mailto:brainstromcommunication@gmail.com" className="text-slate-600 hover:text-[#E85D04] text-xs mt-1 block transition-colors break-all">brainstromcommunication@gmail.com</a>
                   </div>
                 </div>
               </div>
