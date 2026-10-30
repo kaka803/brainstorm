@@ -1132,16 +1132,6 @@ export default function Home() {
                     <a href="tel:+923332556206" className="text-slate-600 hover:text-[#E85D04] text-xs mt-1 block transition-colors">+92 333 2556206</a>
                   </div>
                 </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E85D04] flex-shrink-0">
-                    <i className="fa-solid fa-envelope text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-slate-900 font-bold text-sm">Email Address</h4>
-                    <a href="mailto:brainstromcommunication@gmail.com" className="text-slate-600 hover:text-[#E85D04] text-xs mt-1 block transition-colors break-all">brainstromcommunication@gmail.com</a>
-                  </div>
-                </div>
               </div>
 
               {/* Contact Logo Box with /logo.png */}
