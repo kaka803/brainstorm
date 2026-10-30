@@ -107,12 +107,6 @@ export default function Footer() {
                 </a>
               </p>
               <p className="flex items-center gap-2">
-                <i className="fa-solid fa-envelope text-[#E85D04]"></i>
-                <a href="mailto:brainstromcommunication@gmail.com" className="hover:text-white transition-colors">
-                  brainstromcommunication@gmail.com
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
                 <i className="fa-solid fa-globe text-[#E85D04]"></i>
                 <span>www.brainstormcommunications.org</span>
               </p>
