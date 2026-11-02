@@ -1,7 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:ital,wght@0,200..800;1,200..800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-jetbrains-mono), monospace;
 
   --color-brand-50: #fff7ed;
@@ -11,43 +12,243 @@
   --color-brand-700: #c2410c;
   --color-brand-orange: #E85D04;
   --color-brand-orangeLight: #FF7B00;
-  --color-brand-dark: #0F172A;
-  --color-brand-navy: #1E293B;
-  --color-brand-slate: #334155;
-  --color-brand-lightBg: #F8FAFC;
+  --color-brand-dark: #0A0E17;
+  --color-brand-navy: #111827;
+  --color-brand-slate: #1E293B;
+  --color-brand-lightBg: #F6F7F9;
   --color-brand-cardBg: #FFFFFF;
   --color-brand-borderColor: #E2E8F0;
 }
 
+/* ========================================================
+   GLOBAL TYPOGRAPHY: STRICT MANROPE ENFORCEMENT ON ALL TEXT
+   ======================================================== */
+:root {
+  --font-manrope: 'Manrope', sans-serif;
+}
+
+*, *::before, *::after,
+html, body, button, input, textarea, select, a, p, span, h1, h2, h3, h4, h5, h6, div, label, li, ul, ol, strong, em, b, i, th, td {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-optical-sizing: auto;
+}
+
+html {
+  font-family: 'Manrope', sans-serif !important;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  font-family: var(--font-sans);
-  background-color: #FFFFFF;
-  color: #1E293B;
+  font-family: 'Manrope', sans-serif !important;
+  background-color: #F8F9FA;
+  color: #0F172A;
   overflow-x: hidden;
 }
 
-.sample-card {
-  background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-  transition: all 0.3s ease;
+/* ========================================================
+   GSAP & SCROLL ANIMATION COMPATIBILITY (GLITCH-FREE)
+   ======================================================== */
+
+.reveal,
+.reveal-left,
+.reveal-right,
+.reveal-scale {
+  /* Default visible so there is zero glitch on reload before GSAP kicks in */
+  opacity: 1;
+  transform: none;
+  will-change: transform, opacity;
 }
 
-.sample-card:hover {
-  border-color: #E85D04;
-  box-shadow: 0 10px 30px -5px rgba(232, 93, 4, 0.15);
-  transform: translateY(-2px);
+/* Delay modifiers */
+.delay-75 { transition-delay: 75ms; }
+.delay-100 { transition-delay: 100ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-250 { transition-delay: 250ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-600 { transition-delay: 600ms; }
+
+/* Immediate Hero Keyframe Entrance */
+@keyframes heroSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.glass-nav-light {
-  background: rgba(255, 255, 255, 0.98);
+@keyframes heroSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-hero-badge {
+  animation: heroSlideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-hero-title {
+  animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  opacity: 0;
+}
+
+.animate-hero-desc {
+  animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-hero-cta {
+  animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+.animate-hero-card {
+  animation: heroSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+  opacity: 0;
+}
+
+/* Keyframe animations */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Interactive Card Hover Effects */
+.card-lift {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 45px -10px rgba(15, 23, 42, 0.1);
+  border-color: rgba(232, 93, 4, 0.5);
+}
+
+.card-lift-dark {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-lift-dark:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.6);
+  border-color: rgba(232, 93, 4, 0.5);
+}
+
+/* Glassmorphism Classes */
+.glass-hero-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #E2E8F0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-nav {
+  background: rgba(11, 15, 23, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Reference image style pill badges */
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.pill-badge-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #E2E8F0;
 }
 
 .gradient-text-orange {
-  background: linear-gradient(135deg, #E85D04 0%, #DC2F02 100%);
+  background: linear-gradient(135deg, #E85D04 0%, #FF8533 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -70,69 +271,11 @@ body {
   background: #E85D04;
 }
 
-/* Animations & Modern Aesthetic Utilities */
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+/* Hide scrollbar for clean carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
-.animate-float-slow {
-  animation: floatSlow 5s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
-}
-
-.pill-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.95rem;
-  border-radius: 9999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid #E2E8F0;
-  background-color: #F8FAFC;
-  color: #475569;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-}
-
-.pill-badge-blue {
-  border-color: #DBEAFE;
-  background-color: #EFF6FF;
-  color: #1D4ED8;
-}
-
-.pill-badge-orange {
-  border-color: #FED7AA;
-  background-color: #FFF7ED;
-  color: #C2410C;
-}
-
-.card-lift {
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08);
-}
-

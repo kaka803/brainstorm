@@ -1,12 +1,14 @@
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import GsapAnimation from "@/components/GsapAnimation";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -34,12 +36,18 @@ export default function RootLayout({ children }) {
       lang="en"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`scroll-smooth ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`scroll-smooth ${manrope.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <link rel="icon" href="/logo.png" type="image/png" sizes="any" />
         <link rel="shortcut icon" href="/logo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -50,8 +58,9 @@ export default function RootLayout({ children }) {
       </head>
       <body
         suppressHydrationWarning
-        className="font-sans bg-white text-slate-800 antialiased selection:bg-[#E85D04] selection:text-white flex flex-col min-h-screen"
+        className="font-sans bg-[#F8F9FA] text-slate-900 antialiased selection:bg-[#E85D04] selection:text-white flex flex-col min-h-screen"
       >
+        <GsapAnimation />
         <Navbar />
         <main className="flex-1">
           {children}

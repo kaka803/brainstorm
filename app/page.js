@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
+import AnimatedCounter from "@/components/AnimatedCounter";
 import { coreServices, marketingAndOperationsServices } from "@/lib/servicesData";
 
-// Global Logo URL - Updated to /logo.png across the entire website
 const LOGO_SRC = "/logo.png";
 
 export default function Home() {
   const [calculatorService, setCalculatorService] = useState("bpo");
   const [calculatorScale, setCalculatorScale] = useState(2);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -21,7 +23,40 @@ export default function Home() {
     message: "",
   });
 
-  // Dynamic Calculator calculations with realistic custom scoping logic
+  // Combine and format services for the creative carousel
+  const allServicesList = [
+    ...coreServices.map((s, idx) => ({
+      ...s,
+      num: String(idx + 1).padStart(2, "0"),
+      img: idx === 0 ? "/images/about/expertise.jpg" : idx === 1 ? "/images/about/hero.jpg" : idx === 2 ? "/images/about/global.jpg" : "/images/about/expertise.jpg",
+    })),
+    ...marketingAndOperationsServices.map((s, idx) => ({
+      ...s,
+      num: String(coreServices.length + idx + 1).padStart(2, "0"),
+      img: idx % 2 === 0 ? "/images/about/global.jpg" : "/images/about/hero.jpg",
+    })),
+  ];
+
+  const filteredServices =
+    activeCategory === "all"
+      ? allServicesList
+      : activeCategory === "core"
+      ? allServicesList.filter((s) => s.category.includes("Core") || s.slug === "custom-software")
+      : activeCategory === "call"
+      ? allServicesList.filter((s) => s.slug.includes("call") || s.slug.includes("bpo"))
+      : activeCategory === "ai"
+      ? allServicesList.filter((s) => s.slug.includes("ai"))
+      : allServicesList.filter((s) => !["custom-software", "call-centre", "ai-automation", "bpo-support"].includes(s.slug));
+
+  const handleNextSlide = () => {
+    setCarouselIndex((prev) => (prev + 1 >= filteredServices.length ? 0 : prev + 1));
+  };
+
+  const handlePrevSlide = () => {
+    setCarouselIndex((prev) => (prev - 1 < 0 ? filteredServices.length - 1 : prev - 1));
+  };
+
+  // Dynamic Calculator calculations
   const getEstimateData = () => {
     let scaleTitle = "Squad Capacity & Call Center Seats";
     let scaleLabel = "Growth Squad (6-12 Seats)";
@@ -90,7 +125,7 @@ export default function Home() {
           "Dedicated Solutions Architect & Technical SLA",
         ];
       }
-      notice = "⚠️ Non-Fixed Pricing Notice: Web & software applications cannot have fixed prices as they strictly depend on custom workflows, integrations, security requirements, and deadline urgency. Exact budget and milestones are locked in during our 1-on-1 project scoping meeting.";
+      notice = "⚠️ Non-Fixed Pricing Notice: Web & software applications depend strictly on custom workflows, integrations, and security requirements. Exact budget and milestones are locked in during our project scoping meeting.";
     } else if (calculatorService === "ai") {
       isCustomQuote = true;
       scaleTitle = "AI Workflow Complexity & Integrations";
@@ -123,7 +158,7 @@ export default function Home() {
           "Full Compliance, Data Privacy & SLA Monitoring",
         ];
       }
-      notice = "AI pricing varies with token volumes, LLM orchestration, and CRM integrations. Final milestones are determined after evaluating your technical requirements in a scoping call.";
+      notice = "AI pricing varies with token volumes, LLM orchestration, and CRM integrations. Final milestones are determined after evaluating your technical requirements.";
     } else if (calculatorService === "seo") {
       scaleTitle = "Location Footprint & Campaign Target";
       scaleMarks = ["Single Location", "Multi-Branch (2-5)", "Regional Domination"];
@@ -166,1007 +201,842 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-800">
-      {/* HERO SECTION */}
-      <section className="relative pt-12 pb-20 md:pt-20 md:pb-32 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Hero Content */}
-            <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[#E85D04] text-xs font-bold uppercase tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-[#E85D04] animate-ping"></span>
-                <span>Offshore Telemarketing Squads • Software Engineering • AI</span>
+    <div className="min-h-screen bg-[#F8F9FA] text-slate-900 overflow-x-hidden">
+      
+      {/* ========================================================
+          1. HERO SECTION (REFERENCE IMAGE CURVED POD DESIGN)
+          ======================================================== */}
+      <section className="pt-4 sm:pt-6 pb-12 sm:pb-16 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="relative rounded-[2.2rem] sm:rounded-[3rem] overflow-hidden bg-[#080D18] text-white shadow-2xl border border-slate-800/80 min-h-[580px] sm:min-h-[660px] flex flex-col justify-between p-6 sm:p-10 md:p-14 lg:p-16">
+          
+          {/* Ambient Background & Grid Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#080D18]/90 via-[#0B1324]/80 to-[#080D18] z-0 pointer-events-none"></div>
+          <div
+            className="absolute inset-0 opacity-[0.18] bg-cover bg-center z-0 mix-blend-luminosity filter contrast-125"
+            style={{ backgroundImage: `url('/images/about/hero.jpg')` }}
+          ></div>
+          <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-gradient-to-bl from-[#E85D04]/25 via-orange-600/10 to-transparent rounded-full blur-3xl pointer-events-none z-0 animate-pulse-glow"></div>
+          <div className="absolute -bottom-10 left-10 w-[400px] h-[400px] bg-gradient-to-tr from-blue-600/15 via-indigo-600/10 to-transparent rounded-full blur-3xl pointer-events-none z-0"></div>
+
+          {/* Sub-Header Row Inside Hero: Left Badge & Quick Nav */}
+          <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            
+            {/* Top-Left Frosted Badge (Matches reference: "Insight SINCE 1948...") */}
+            <div className="glass-pill px-4 py-2.5 rounded-2xl max-w-xs border border-white/15 backdrop-blur-md shadow-lg animate-hero-badge">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E85D04] animate-ping"></span>
+                <span>Insight</span>
               </div>
+              <div className="text-xl sm:text-2xl font-black tracking-tight text-white mt-0.5">
+                SINCE 2006
+              </div>
+              <p className="text-[11px] text-slate-300/90 leading-tight mt-0.5">
+                20+ Years of outsourcing excellence & custom software from Lahore
+              </p>
+            </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12]">
-                We Build Dedicated <span className="gradient-text-orange">Outbound Call Squads</span> & Custom Software
+            {/* Quick Status Pill */}
+            <div className="hidden md:flex items-center gap-4 glass-pill px-5 py-2.5 rounded-full border border-white/15 text-xs font-semibold text-slate-200 animate-hero-badge">
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>250+ Dedicated Agent Seats</span>
+              </span>
+              <span className="text-white/20">|</span>
+              <span className="flex items-center gap-2">
+                <i className="fa-solid fa-clock text-[#E85D04]"></i>
+                <span>US & UK Timezone Aligned</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom Hero Row: Punchy Editorial Headline & Floating Glass Card */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mt-12 sm:mt-16">
+            
+            {/* Left Column: Big Headline (Matches reference style) */}
+            <div className="lg:col-span-8 space-y-5">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.08] animate-hero-title">
+                Engineering & Outsourcing for a Better Everyday
               </h1>
-
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
-                Brainstorm Communications empowers US, UK, and global enterprises with high-converting offshore telemarketing squads, custom full-stack web platforms, and automated AI dialers—managed directly from our 24/7 technology campus in <strong className="text-slate-900">Lahore, Pakistan</strong>.
+              
+              <p className="text-sm sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal animate-hero-desc">
+                High-conversion offshore telemarketing squads, bespoke full-stack web platforms, and autonomous AI automation engineered directly from Lahore, Pakistan.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-                <a
-                  href="#services"
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-[#E85D04] to-orange-600 hover:from-orange-600 hover:to-[#E85D04] text-white font-bold text-base shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
-                >
-                  <span>Explore Our Capabilities</span>
-                  <i className="fa-solid fa-arrow-right text-sm"></i>
-                </a>
+              <div className="flex flex-wrap items-center gap-3 pt-3 animate-hero-cta">
                 <Link
                   href="/contact"
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-slate-800 hover:text-[#E85D04] font-semibold text-base border border-slate-300 hover:border-[#E85D04] transition-all flex items-center justify-center gap-2 shadow-sm"
+                  className="px-7 py-3.5 rounded-full bg-[#E85D04] hover:bg-[#ff6b00] text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-xl shadow-orange-500/30 hover:scale-105 active:scale-95 flex items-center gap-2"
                 >
-                  <i className="fa-solid fa-paper-plane text-[#E85D04]"></i>
-                  <span>Book Consultation</span>
+                  <span>Launch Your Campaign</span>
+                  <i className="fa-solid fa-arrow-right text-xs"></i>
                 </Link>
-              </div>
 
-              {/* Trust Features Strip */}
-              <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-500 font-medium">
-                <span className="flex items-center gap-2">
-                  <i className="fa-solid fa-circle-check text-[#E85D04]"></i>
-                  <span>250+ Dedicated Caller Seats</span>
-                </span>
-                <span className="flex items-center gap-2">
-                  <i className="fa-solid fa-circle-check text-[#E85D04]"></i>
-                  <span>US & UK Timezone Aligned</span>
-                </span>
-                <span className="flex items-center gap-2">
-                  <i className="fa-solid fa-circle-check text-[#E85D04]"></i>
-                  <span>Strict NDAs & 100% QA</span>
-                </span>
+                <a
+                  href="#services"
+                  className="px-6 py-3.5 rounded-full glass-pill hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2"
+                >
+                  <span>Explore Services</span>
+                  <i className="fa-solid fa-arrow-down text-xs"></i>
+                </a>
+
+                <a
+                  href="tel:+923332556206"
+                  className="px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/15 text-slate-200 font-semibold text-xs transition-all flex items-center gap-2 border border-white/10"
+                >
+                  <i className="fa-solid fa-phone text-orange-400"></i>
+                  <span>+92 333 2556206</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Floating Frosted Card (Matches reference card on the right) */}
+            <div className="lg:col-span-4 flex justify-start lg:justify-end animate-hero-card">
+              <div className="glass-hero-card rounded-3xl p-5 border border-white/20 w-full max-w-sm shadow-2xl backdrop-blur-xl space-y-3.5 card-lift-dark">
+                <div className="relative h-32 rounded-2xl overflow-hidden bg-slate-900 border border-white/10 group">
+                  <img
+                    src="/images/about/expertise.jpg"
+                    alt="Operations Floor"
+                    className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500"
+                  />
+                  <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-emerald-500/25 border border-emerald-400/40 text-[10px] text-emerald-300 font-bold backdrop-blur-sm">
+                    ● Live Operations
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[#E85D04]">
+                    Tech Squads & BPO
+                  </div>
+                  <h4 className="text-sm font-extrabold text-white mt-1">
+                    Dedicated Offshore Excellence
+                  </h4>
+                  <p className="text-xs text-slate-300/90 mt-1 leading-relaxed">
+                    Custom software engineering & outbound telemarketing scaled for enterprise reliability.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1 border-t border-white/10">
+                  <Link
+                    href="/about"
+                    className="flex-1 py-2 text-center text-xs font-bold text-white bg-white/10 hover:bg-white/20 rounded-xl transition-all"
+                  >
+                    Learn More
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="flex-1 py-2 text-center text-xs font-black text-slate-900 bg-white hover:bg-slate-100 rounded-xl transition-all shadow-md"
+                  >
+                    Get It Now
+                  </Link>
+                </div>
               </div>
             </div>
 
-            {/* Right Column: Creative Operations & Growth Analytics Hub (Replaces static logo) */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-lg lg:max-w-none">
-                
-                {/* Floating Glow Ambient Background */}
-                <div className="absolute -inset-3 bg-gradient-to-tr from-[#E85D04]/25 via-amber-500/20 to-orange-600/15 rounded-[2.5rem] blur-2xl opacity-70 animate-pulse-glow"></div>
-
-                {/* Floating Top-Right Badge */}
-                <div className="hidden sm:flex absolute -top-5 -right-3 z-30 bg-white/95 backdrop-blur-md py-2 px-3.5 rounded-2xl border border-slate-200/90 shadow-xl items-center gap-2.5 animate-float-slow">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-bold border border-emerald-200">
-                    <i className="fa-solid fa-arrow-trend-up"></i>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase">Conversion Rate</div>
-                    <div className="text-xs font-black text-slate-900">+42.8% Spike</div>
-                  </div>
-                </div>
-
-                {/* Floating Bottom-Left Badge */}
-                <div className="hidden sm:flex absolute -bottom-5 -left-3 z-30 bg-slate-900/95 backdrop-blur-md py-2.5 px-4 rounded-2xl border border-slate-800 shadow-xl items-center gap-3 text-white">
-                  <span className="flex h-3 w-3 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E85D04] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#E85D04]"></span>
-                  </span>
-                  <div>
-                    <div className="text-[10px] text-orange-400 font-bold uppercase tracking-wider">Live Call Center Floor</div>
-                    <div className="text-xs font-bold text-white">148 Active Callers in Lahore</div>
-                  </div>
-                </div>
-
-                {/* Main Dashboard Card */}
-                <div className="relative rounded-[2rem] bg-white border border-slate-200/90 shadow-2xl p-6 sm:p-7 space-y-5 overflow-hidden">
-                  
-                  {/* Card Header */}
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                    <div className="flex items-center space-x-2.5">
-                      <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                      </span>
-                      <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                        Live Operations Hub
-                      </span>
-                    </div>
-
-                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-orange-50 text-[#E85D04] border border-orange-200">
-                      EST. 2006 • 24/7 ACTIVE
-                    </span>
-                  </div>
-
-                  {/* Top 3 Live Metrics */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-                      <div className="text-[11px] font-medium text-slate-500">Connect Rate</div>
-                      <div className="text-lg font-black text-slate-900 mt-0.5">94.2%</div>
-                      <div className="text-[10px] text-emerald-600 font-bold mt-0.5">↑ 14.8% SLA</div>
-                    </div>
-
-                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-                      <div className="text-[11px] font-medium text-slate-500">Weekly Leads</div>
-                      <div className="text-lg font-black text-[#E85D04] mt-0.5">1,280+</div>
-                      <div className="text-[10px] text-[#E85D04] font-bold mt-0.5">100% QA Verified</div>
-                    </div>
-
-                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-                      <div className="text-[11px] font-medium text-slate-500">Code Uptime</div>
-                      <div className="text-lg font-black text-slate-900 mt-0.5">99.98%</div>
-                      <div className="text-[10px] text-blue-600 font-bold mt-0.5">Zero Downtime</div>
-                    </div>
-                  </div>
-
-                  {/* Interactive Growth & Pipeline Vector Graph */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-b from-orange-50/50 to-white border border-orange-100/80 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <div>
-                        <div className="font-bold text-slate-900 text-xs sm:text-sm">
-                          Campaign Pipeline & Lead Velocity
-                        </div>
-                        <div className="text-[11px] text-slate-500">
-                          Verified Appointments & Revenue Impact
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs font-black text-[#E85D04] bg-orange-100/70 px-2.5 py-0.5 rounded-full">
-                          $3.8M Pipeline
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* SVG Graphic with Gradient Wave Area */}
-                    <div className="relative pt-2">
-                      <svg
-                        viewBox="0 0 400 130"
-                        className="w-full h-28 overflow-visible"
-                        preserveAspectRatio="none"
-                      >
-                        <defs>
-                          <linearGradient id="heroGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#E85D04" stopOpacity="0.38" />
-                            <stop offset="70%" stopColor="#FF7B00" stopOpacity="0.1" />
-                            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                          </linearGradient>
-                          <linearGradient id="lineStroke" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#FF7B00" />
-                            <stop offset="50%" stopColor="#E85D04" />
-                            <stop offset="100%" stopColor="#C2410C" />
-                          </linearGradient>
-                        </defs>
-
-                        {/* Grid guidelines */}
-                        <line x1="0" y1="25" x2="400" y2="25" stroke="#E2E8F0" strokeDasharray="3 3" />
-                        <line x1="0" y1="65" x2="400" y2="65" stroke="#E2E8F0" strokeDasharray="3 3" />
-                        <line x1="0" y1="105" x2="400" y2="105" stroke="#E2E8F0" strokeDasharray="3 3" />
-
-                        {/* Filled Gradient Area */}
-                        <path
-                          d="M0,95 Q60,85 100,60 T200,45 T300,20 T400,10 L400,125 L0,125 Z"
-                          fill="url(#heroGradient)"
-                        />
-
-                        {/* Glowing Line */}
-                        <path
-                          d="M0,95 Q60,85 100,60 T200,45 T300,20 T400,10"
-                          fill="none"
-                          stroke="url(#lineStroke)"
-                          strokeWidth="3.5"
-                          strokeLinecap="round"
-                        />
-
-                        {/* Peak Data Points with glow */}
-                        <circle cx="100" cy="60" r="4.5" fill="#FFFFFF" stroke="#E85D04" strokeWidth="3" />
-                        <circle cx="200" cy="45" r="4.5" fill="#FFFFFF" stroke="#E85D04" strokeWidth="3" />
-                        <circle cx="300" cy="20" r="5" fill="#FFFFFF" stroke="#E85D04" strokeWidth="3.5" />
-                        <circle cx="395" cy="10" r="6" fill="#E85D04" stroke="#FFFFFF" strokeWidth="2.5" />
-                      </svg>
-
-                      {/* X-Axis Labels */}
-                      <div className="flex justify-between text-[10px] font-mono text-slate-400 pt-1">
-                        <span>Wk 1</span>
-                        <span>Wk 2 (Pilot)</span>
-                        <span>Wk 3 (Scaling)</span>
-                        <span className="font-bold text-[#E85D04]">Wk 4 (Peak ROI)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Real-Time Live Feed Stream */}
-                  <div className="space-y-2 pt-1">
-                    <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                      <span>Real-Time Operation Feed</span>
-                      <span className="text-[10px] text-emerald-600 font-bold">Auto-Syncing</span>
-                    </div>
-
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-xs">
-                      <div className="flex items-center space-x-2 truncate pr-2">
-                        <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
-                        <span className="font-semibold text-slate-800 truncate">
-                          Squad Beta • US B2B Discovery Call Qualified
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 shrink-0">
-                        +1 Booked
-                      </span>
-                    </div>
-
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between text-xs">
-                      <div className="flex items-center space-x-2 truncate pr-2">
-                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                        <span className="font-semibold text-slate-800 truncate">
-                          Software Hub • CRM Telephony Dialer API v2.4
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 shrink-0">
-                        Live 99.9%
-                      </span>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
           </div>
+
         </div>
       </section>
 
-      {/* STATS COUNTER BAR */}
-      <section className="py-12 bg-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x-0 md:divide-x divide-slate-800">
-            <div className="p-4">
-              <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white">2006</div>
-              <div className="text-xs text-[#E85D04] uppercase tracking-wider font-semibold mt-1">
-                Year Founded
-              </div>
-            </div>
 
-            <div className="p-4">
-              <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white">
-                18+ <span className="text-[#E85D04]">Years</span>
-              </div>
-              <div className="text-xs text-[#E85D04] uppercase tracking-wider font-semibold mt-1">
-                Industry Leadership
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white">11-50</div>
-              <div className="text-xs text-[#E85D04] uppercase tracking-wider font-semibold mt-1">
-                Core Employees
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="text-3xl sm:text-4xl font-extrabold font-mono text-white">500+</div>
-              <div className="text-xs text-[#E85D04] uppercase tracking-wider font-semibold mt-1">
-                Successful Campaigns
-              </div>
-            </div>
+      {/* ========================================================
+          2. "WHO WE ARE?" SECTION (MATCHES REFERENCE EDITORIAL DESIGN)
+          ======================================================== */}
+      <section id="about" className="py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="space-y-8">
+          
+          {/* Pill Badge */}
+          <div className="reveal">
+            <span className="pill-badge">
+              <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
+              Who we are?
+            </span>
           </div>
-        </div>
-      </section>
 
-      {/* ABOUT US SECTION */}
-      <section id="about" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-[#E85D04] text-xs font-bold uppercase">
-                About Brainstorm Communications
-              </div>
-
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-                Combining Software Engineering Capability & Telemarketing Expertise
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            
+            {/* Left Big Typography with Muted Subtext */}
+            <div className="lg:col-span-8 space-y-6 reveal delay-100">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.2]">
+                Brainstorm Communications is an outsourcing & software house from Lahore, Pakistan.{" "}
+                <span className="text-slate-400 font-medium">
+                  Since 2006, we have made enterprise-grade web applications, high-converting outbound call centre campaigns, and automated AI systems for North America, the UK, and global markets.
+                </span>
               </h2>
 
-              <p className="text-slate-600 text-base leading-relaxed">
-                Brainstorm Communications Call Centre combines capability and expertise in order to provide you
-                with the right solution, taking into full consideration industry, proposition, timing, and
-                target market.
-              </p>
-
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Brainstorm Communications engages in the full process of project planning and set up, ensuring a
-                full understanding of your requirement giving you the full benefit of our many years of
-                experience within the call centre and software development industry.
-              </p>
-
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Our dedicated outbound call centre and software development hub is located in{" "}
-                <strong className="text-slate-900">Lahore, Pakistan</strong>. Our ability to deliver effective outbound
-                call centre solutions is based on a solid foundation of{" "}
-                <span className="text-[#E85D04] font-semibold">
-                  Expertise, Technology, Recruitment, Training, and Custom Scripting
-                </span>.
-              </p>
-            </div>
-
-            {/* Right Card Box with Logo */}
-            <div className="lg:col-span-6">
-              <div className="sample-card rounded-2xl p-8 bg-slate-50 border border-slate-200 space-y-6">
-                <div className="flex items-center space-x-4 pb-6 border-b border-slate-200">
-                  <img
-                    src={LOGO_SRC}
-                    alt="Brainstorm Logo"
-                    className="h-14 w-auto object-contain"
-                  />
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">Brainstorm Communications</h3>
-                    <p className="text-xs text-slate-500">Outsourcing & Offshoring Consulting • Lahore, PK</p>
-                  </div>
+              {/* Consultation Link Strip */}
+              <div className="pt-6 flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Free Consultation
+                  </span>
+                  <Link
+                    href="/contact"
+                    className="text-xs font-extrabold text-[#E85D04] hover:text-orange-700 flex items-center gap-1.5 transition-colors group"
+                  >
+                    <span>Learn More</span>
+                    <i className="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                  </Link>
                 </div>
 
-                <div className="space-y-4 text-xs text-slate-700">
-                  <div className="flex justify-between py-2 border-b border-slate-200">
-                    <span className="text-slate-500 font-semibold">Official Website:</span>
-                    <a
-                      href="http://www.brainstormcommunications.org"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#E85D04] hover:underline font-mono"
-                    >
-                      www.brainstormcommunications.org
-                    </a>
-                  </div>
+                <div className="h-4 w-px bg-slate-300 hidden sm:block"></div>
 
-                  <div className="flex justify-between py-2 border-b border-slate-200">
-                    <span className="text-slate-500 font-semibold">Industry Focus:</span>
-                    <span className="text-slate-900 font-medium">
-                      Software Engineering & Outbound Telemarketing
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between py-2 border-b border-slate-200">
-                    <span className="text-slate-500 font-semibold">Company Size:</span>
-                    <span className="text-slate-900 font-medium">11-50 Employees</span>
-                  </div>
-
-                  <div className="flex justify-between py-2">
-                    <span className="text-slate-500 font-semibold">Specialties:</span>
-                    <span className="text-slate-900 font-medium">
-                      Telemarketing, Outbound Call Centre, Software Engineering
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                  <i className="fa-solid fa-shield-halved text-emerald-600"></i>
+                  <span>Strict NDAs & SOC-Aligned Data Security</span>
                 </div>
               </div>
             </div>
+
+            {/* Right Photo Preview & Squad Card Collage */}
+            <div className="lg:col-span-4 space-y-3.5 reveal-right delay-200">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-3xl overflow-hidden shadow-sm border border-slate-200/80 group">
+                  <img
+                    src="/images/about/global.jpg"
+                    alt="Offshore Lab"
+                    className="w-full h-36 sm:h-40 object-cover group-hover:scale-105 transition-all duration-500"
+                  />
+                </div>
+                <div className="rounded-3xl overflow-hidden shadow-sm border border-slate-200/80 group">
+                  <img
+                    src="/images/about/hero.jpg"
+                    alt="Call Center Floor"
+                    className="w-full h-36 sm:h-40 object-cover group-hover:scale-105 transition-all duration-500"
+                  />
+                </div>
+              </div>
+
+              {/* Operations Card Box */}
+              <div className="p-4 rounded-3xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-between card-lift">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-lg font-bold">
+                    <i className="fa-solid fa-headset"></i>
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900">
+                      BPO Squad Ramp-Up
+                    </div>
+                    <div className="text-[11px] text-slate-500">
+                      Fast 7-Day Dedicated Onboarding
+                    </div>
+                  </div>
+                </div>
+                <Link
+                  href="/contact"
+                  className="w-8 h-8 rounded-full bg-slate-900 hover:bg-[#E85D04] text-white flex items-center justify-center transition-colors shadow-xs"
+                >
+                  <i className="fa-solid fa-arrow-right text-xs"></i>
+                </Link>
+              </div>
+            </div>
+
           </div>
+
         </div>
       </section>
 
-      {/* SERVICES SECTION */}
-      <section id="services" className="py-24 bg-slate-50 border-t border-slate-200">
+
+      {/* ========================================================
+          3. "WHAT WE OFFER" / CREATIVE SERVICES CAROUSEL (REFERENCE STYLE)
+          ======================================================== */}
+      <section id="services" className="py-20 md:py-28 bg-white border-y border-slate-200/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Main Category Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="pill-badge pill-badge-orange mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
-              Flagship Specializations
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Our Core Services
-            </h2>
-            <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
-              Bespoke full-stack software development, autonomous AI workflows, and dedicated offshore outbound calling squads managed directly from Lahore.
+          {/* Section Header: Pill, Title Left, Subtext Right */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+            <div className="space-y-3 max-w-xl">
+              <span className="pill-badge">
+                <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
+                Service
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                What We Offer
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-500 max-w-md leading-relaxed md:text-right">
+              We produce high-impact software solutions and dedicated call center squads, combining technical craftsmanship and modern telemarketing infrastructure.
             </p>
           </div>
 
-          {/* 3 CORE FLAGSHIP SERVICES (Custom Software, AI Automation, Outbound Contact Center) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {coreServices.map((service) => (
-              <div
-                key={service.slug}
-                className="sample-card rounded-3xl p-8 bg-white border border-slate-200/90 shadow-sm hover:border-[#E85D04] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1.5"
+          {/* Interactive Category Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2 mb-8">
+            {[
+              { id: "all", label: "All Capabilities" },
+              { id: "core", label: "Full-Stack Software" },
+              { id: "call", label: "Outbound Call Center" },
+              { id: "ai", label: "AI & Automation" },
+              { id: "growth", label: "Growth & Operations" },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setCarouselIndex(0);
+                }}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  activeCategory === cat.id
+                    ? "bg-slate-900 text-white shadow-md"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200/80"
+                }`}
               >
-                <div>
-                  {/* Top Bar with Icon & Number */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E85D04] group-hover:bg-[#E85D04] group-hover:text-white transition-all shadow-xs">
-                      <i className={`${service.icon} text-2xl`}></i>
-                    </div>
-                    <span className="text-xs font-mono font-bold text-slate-400 group-hover:text-[#E85D04] transition-colors">
-                      {service.number}
-                    </span>
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Creative Services Cards Grid / Slider */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.slice(carouselIndex, carouselIndex + 3).concat(
+              // Wrap around if near end
+              filteredServices.length > 3 && carouselIndex + 3 > filteredServices.length
+                ? filteredServices.slice(0, (carouselIndex + 3) % filteredServices.length)
+                : []
+            ).slice(0, 3).map((srv, idx) => (
+              <div
+                key={`${srv.slug}-${idx}`}
+                className="group rounded-[2rem] bg-slate-50/70 border border-slate-200/90 overflow-hidden shadow-xs hover:shadow-xl hover:border-[#E85D04]/60 transition-all duration-500 flex flex-col justify-between card-lift"
+              >
+                {/* Image Banner Container */}
+                <div className="relative h-48 sm:h-52 overflow-hidden bg-slate-900">
+                  <img
+                    src={srv.img}
+                    alt={srv.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                  
+                  {/* Category Pill Over Image */}
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[10px] font-extrabold uppercase tracking-wider text-slate-900 shadow-sm">
+                    {srv.category}
                   </div>
 
-                  {/* Badge */}
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-orange-100 text-[#E85D04] mb-3">
-                    {service.badge}
-                  </span>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#E85D04] transition-colors">
-                    {service.title}
-                  </h3>
-
-                  {/* Prompt-specified Description */}
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
-                    {service.shortDesc}
-                  </p>
-
-                  {/* Feature Bullets */}
-                  <ul className="space-y-2 mb-8 text-xs text-slate-600">
-                    {service.bullets.slice(0, 4).map((bullet, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <i className="fa-solid fa-circle-check text-[#E85D04] text-[11px] mt-0.5 shrink-0"></i>
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Number Badge */}
+                  <div className="absolute bottom-3 right-3 text-xs font-mono font-bold text-white/80 bg-slate-900/60 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-white/10">
+                    {srv.num}
+                  </div>
                 </div>
 
-                {/* Customized Prompt Button */}
-                <div className="pt-5 border-t border-slate-100">
-                  <Link
-                    href={`/services/${service.slug}`}
-                    className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-[#E85D04] to-orange-600 hover:from-orange-600 hover:to-[#E85D04] text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/20 hover:shadow-orange-500/35 transition-all flex items-center justify-center gap-2 group-hover:scale-[1.01]"
-                  >
-                    <span>{service.buttonText}</span>
-                    <i className="fa-solid fa-arrow-right text-[11px] transition-transform group-hover:translate-x-1"></i>
-                  </Link>
+                {/* Card Content */}
+                <div className="p-6 sm:p-7 space-y-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-[#E85D04] transition-colors">
+                      {srv.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
+                      {srv.shortDesc || srv.tagline}
+                    </p>
+
+                    {/* Highlights */}
+                    <div className="mt-4 pt-3 border-t border-slate-200/80 space-y-1.5">
+                      {srv.bullets.slice(0, 2).map((b, bi) => (
+                        <div key={bi} className="flex items-center gap-2 text-[11px] text-slate-600">
+                          <i className="fa-solid fa-circle-check text-[#E85D04] text-[10px]"></i>
+                          <span className="truncate">{b}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bottom Link Action */}
+                  <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
+                    <Link
+                      href={`/services/${srv.slug}`}
+                      className="text-xs font-extrabold text-slate-900 group-hover:text-[#E85D04] flex items-center gap-1.5 transition-colors"
+                    >
+                      <span>Learn More</span>
+                      <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </Link>
+
+                    <Link
+                      href={`/services/${srv.slug}`}
+                      className="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-[#E85D04] group-hover:text-white text-slate-600 flex items-center justify-center transition-colors text-xs"
+                      aria-label={srv.title}
+                    >
+                      <i className="fa-solid fa-chevron-right text-[10px]"></i>
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* SEPARATE CATEGORY: MARKETING & OPERATIONS */}
-          <div className="mt-20 pt-16 border-t border-slate-200">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="pill-badge pill-badge-orange mb-2">
-                <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
-                Specialized Support Category
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Marketing & Operations
-              </h3>
-              <p className="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
-                Supporting growth infrastructure including Google Maps 3-pack dominance, local SEO, custom scripting, and 100% audio quality assurance audits.
-              </p>
-            </div>
-
-            {/* Marketing & Operations Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {marketingAndOperationsServices.map((service) => (
-                <div
-                  key={service.slug}
-                  className="sample-card rounded-3xl p-7 bg-white border border-slate-200/90 shadow-xs hover:border-[#E85D04] hover:shadow-lg transition-all flex flex-col justify-between group"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl shadow-xs group-hover:bg-[#E85D04] group-hover:text-white transition-all">
-                        <i className={service.icon}></i>
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                        {service.badge}
-                      </span>
-                    </div>
-
-                    <h4 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#E85D04] transition-colors">
-                      {service.title}
-                    </h4>
-
-                    <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                      {service.shortDesc}
-                    </p>
-
-                    <ul className="space-y-1.5 mb-6 text-xs text-slate-500">
-                      {service.bullets.slice(0, 3).map((bullet, bIdx) => (
-                        <li key={bIdx} className="flex items-center gap-2">
-                          <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-100">
-                    <Link
-                      href={`/services/${service.slug}`}
-                      className="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-[#E85D04] text-slate-800 hover:text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"
-                    >
-                      <span>{service.buttonText}</span>
-                      <i className="fa-solid fa-arrow-right text-[10px]"></i>
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* Slider Arrow Controls (Matches Reference Image: ← → buttons at bottom right) */}
+          <div className="flex items-center justify-end gap-3 mt-8 pt-4">
+            <span className="text-xs text-slate-400 font-semibold mr-2">
+              Viewing {carouselIndex + 1} - {Math.min(carouselIndex + 3, filteredServices.length)} of {filteredServices.length}
+            </span>
+            <button
+              onClick={handlePrevSlide}
+              className="w-10 h-10 rounded-full border border-slate-300 bg-white hover:bg-slate-900 hover:text-white hover:border-slate-900 flex items-center justify-center text-slate-700 transition-all cursor-pointer shadow-xs active:scale-95"
+              aria-label="Previous services"
+            >
+              <i className="fa-solid fa-arrow-left text-xs"></i>
+            </button>
+            <button
+              onClick={handleNextSlide}
+              className="w-10 h-10 rounded-full border border-slate-300 bg-white hover:bg-slate-900 hover:text-white hover:border-slate-900 flex items-center justify-center text-slate-700 transition-all cursor-pointer shadow-xs active:scale-95"
+              aria-label="Next services"
+            >
+              <i className="fa-solid fa-arrow-right text-xs"></i>
+            </button>
           </div>
 
         </div>
       </section>
 
-      {/* PROCESS SECTION (Replaces Portfolio) */}
-      <section id="process" className="py-24 bg-white border-t border-slate-200 relative overflow-hidden">
-        {/* Soft Ambient Background Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-orange-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* ========================================================
+          4. "BENEFITS OF BRAINSTORM" / BENTO GRID & ANIMATED STATS
+          (MATCHES REFERENCE IMAGE DARK BENTO CONTAINER)
+          ======================================================== */}
+      <section id="benefits" className="py-20 md:py-28 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="relative rounded-[2.2rem] sm:rounded-[3rem] bg-[#090D17] text-white p-7 sm:p-12 md:p-16 border border-slate-800 shadow-2xl overflow-hidden">
           
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <span className="pill-badge pill-badge-orange">
-              <span className="w-2 h-2 rounded-full bg-[#E85D04] animate-ping"></span>
-              The Brainstorm Methodology
+          {/* Subtle Ambient Glow */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#E85D04]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          {/* Section Header Inside Dark Pod */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 relative z-10">
+            <div className="space-y-3 max-w-xl">
+              <span className="pill-badge-dark">
+                <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
+                Benefits
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+                Benefits of Brainstorm
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed md:text-right">
+              Built on decades of execution, we deliver consistent quality and reliable squads through our specialized technical and offshore expertise in Lahore.
+            </p>
+          </div>
+
+          {/* BENTO GRID (MATCHES REFERENCE IMAGE ARCHITECTURE) */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
+            
+            {/* Card 1: 18+ Years Heritage with Animated Counter & Matrix Graphic */}
+            <div className="md:col-span-5 p-8 rounded-3xl bg-white/[0.04] border border-white/10 card-lift-dark flex flex-col justify-between">
+              <div>
+                <div className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight">
+                  <AnimatedCounter target={18} suffix="+" duration={2200} />
+                </div>
+                <div className="text-base font-extrabold text-slate-200 mt-2">
+                  Years of Offshore Heritage
+                </div>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  A long-standing legacy of trust and agile telemarketing & engineering execution since 2006.
+                </p>
+              </div>
+
+              {/* Animated Matrix Bars (Matches reference image graphic at bottom of 75+ card) */}
+              <div className="mt-8 pt-6 border-t border-white/10 flex items-end gap-1.5 h-14">
+                {[35, 55, 30, 80, 95, 60, 40, 75, 100, 50, 65, 85, 45, 60, 90, 75, 55, 80, 95, 40].map((h, i) => (
+                  <div
+                    key={i}
+                    style={{ height: `${h}%`, animationDelay: `${i * 70}ms` }}
+                    className="flex-1 bg-gradient-to-t from-orange-500/20 via-orange-500/60 to-[#E85D04] rounded-full animate-pulse-glow"
+                  ></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Column 2: Stack of Quality & Partnership Cards */}
+            <div className="md:col-span-3 flex flex-col gap-6">
+              
+              {/* Quality First Card */}
+              <div className="p-6 rounded-3xl bg-white/[0.04] border border-white/10 card-lift-dark space-y-3 flex-1 flex flex-col justify-between">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-base">
+                  <i className="fa-solid fa-leaf"></i>
+                </div>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Quality First
+                  </div>
+                  <div className="text-2xl font-black text-emerald-400 mt-0.5">
+                    <AnimatedCounter target={99.8} decimals={1} suffix="%" duration={2000} />
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    Consistent quality fabrics and strict SLAs for everyday enterprise needs.
+                  </p>
+                </div>
+              </div>
+
+              {/* People & Partnership Card */}
+              <div className="p-6 rounded-3xl bg-white/[0.04] border border-white/10 card-lift-dark space-y-3 flex-1 flex flex-col justify-between">
+                <div className="w-10 h-10 rounded-2xl bg-orange-500/20 text-[#E85D04] border border-orange-500/30 flex items-center justify-center text-base">
+                  <i className="fa-solid fa-bullseye"></i>
+                </div>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    People & Partnership
+                  </div>
+                  <div className="text-2xl font-black text-[#E85D04] mt-0.5">
+                    <AnimatedCounter target={24} suffix="/7" duration={1800} />
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    Working together for stronger conversions and lasting partnerships.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Column 3: GLOBAL Scaling Card with Stats */}
+            <div className="md:col-span-4 p-8 rounded-3xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 card-lift-dark flex flex-col justify-between">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#E85D04]">
+                  Worldwide Reach
+                </span>
+                <div className="text-3xl sm:text-4xl font-black text-white mt-1">
+                  GLOBAL
+                </div>
+                <div className="text-xs font-bold text-slate-300">
+                  Offshore Operations & Scaling
+                </div>
+                <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
+                  Powering outbound campaigns, software engineering, and back-office pipelines that reach partners worldwide.
+                </p>
+              </div>
+
+              {/* Counters Strip at Bottom */}
+              <div className="pt-6 mt-6 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <div className="text-lg sm:text-xl font-black text-white">
+                    <AnimatedCounter target={500} suffix="+" duration={2400} />
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium">Projects</div>
+                </div>
+                <div className="border-x border-white/10">
+                  <div className="text-lg sm:text-xl font-black text-white">
+                    <AnimatedCounter target={10} suffix="M+" duration={2500} />
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium">Calls Logged</div>
+                </div>
+                <div>
+                  <div className="text-lg sm:text-xl font-black text-white">
+                    <AnimatedCounter target={99.4} decimals={1} suffix="%" duration={2000} />
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium">Retention</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================================
+          5. 4-PHASE DELIVERY PROCESS ROADMAP
+          ======================================================== */}
+      <section id="process" className="py-20 md:py-28 bg-white border-t border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <span className="pill-badge">
+              <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
+              How We Work
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Our 4-Step Operational Process
+              From Scoping to Live Execution
             </h2>
-            <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
-              A battle-tested offshore framework designed to eliminate onboarding friction, ensure script compliance, and drive measurable ROI.
+            <p className="text-xs sm:text-sm text-slate-500">
+              A transparent, 4-stage operational roadmap ensuring seamless offshore onboarding.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Step 1 */}
-            <div className="bg-slate-50 rounded-3xl p-7 border border-slate-200/90 shadow-xs card-lift hover:border-orange-300 flex flex-col justify-between group">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl shadow-xs group-hover:bg-[#E85D04] group-hover:text-white transition-all">
-                    <i className="fa-solid fa-magnifying-glass-chart"></i>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                step: "01",
+                title: "Discovery & Scoping",
+                desc: "We analyze your target market, scripts, or technical architecture to establish precise KPIs and timelines.",
+                icon: "fa-solid fa-magnifying-glass-chart",
+              },
+              {
+                step: "02",
+                title: "Rapid Squad Onboarding",
+                desc: "Dedicated agents and developers undergo rigorous phonetics, technical onboarding, and compliance drills.",
+                icon: "fa-solid fa-users-gear",
+              },
+              {
+                step: "03",
+                title: "Live Multi-Channel Run",
+                desc: "We launch outbound campaigns or initiate development sprints with daily transparent Slack & CRM tracking.",
+                icon: "fa-solid fa-rocket",
+              },
+              {
+                step: "04",
+                title: "Scale & Continuous QA",
+                desc: "Weekly audits, conversion coaching, and CI/CD reviews ensure continuous performance optimization.",
+                icon: "fa-solid fa-chart-line",
+              },
+            ].map((p, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/90 shadow-xs hover:border-[#E85D04] transition-all card-lift space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-lg font-bold">
+                    <i className={p.icon}></i>
                   </div>
-                  <span className="text-2xl font-black text-slate-300 group-hover:text-[#E85D04] transition-colors font-mono">
-                    01
+                  <span className="text-2xl font-black font-mono text-slate-300">
+                    {p.step}
                   </span>
                 </div>
-
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#E85D04] transition-colors">
-                  Discovery & Scope Audit
+                <h3 className="text-base font-extrabold text-slate-900">
+                  {p.title}
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                  In-depth analysis of your target market, campaign goals, telephony requirements, and technical specifications.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {p.desc}
                 </p>
-
-                <ul className="space-y-1.5 text-xs text-slate-600">
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Persona & Audience Mapping</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Tech Architecture Review</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>KPI Benchmarks Agreement</span>
-                  </li>
-                </ul>
               </div>
-
-              <div className="pt-4 mt-6 border-t border-slate-200 text-[11px] font-bold text-[#E85D04]">
-                Phase 1: Days 1 - 2
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-slate-50 rounded-3xl p-7 border border-slate-200/90 shadow-xs card-lift hover:border-orange-300 flex flex-col justify-between group">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl shadow-xs group-hover:bg-[#E85D04] group-hover:text-white transition-all">
-                    <i className="fa-solid fa-pen-ruler"></i>
-                  </div>
-                  <span className="text-2xl font-black text-slate-300 group-hover:text-[#E85D04] transition-colors font-mono">
-                    02
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#E85D04] transition-colors">
-                  Scripting & Tech Staging
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                  Custom telemarketing script copywriting, agent phonetic coaching, VoIP dialer configuration, and staging portals.
-                </p>
-
-                <ul className="space-y-1.5 text-xs text-slate-600">
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Objection Matrix Design</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Dialer & CRM Webhooks</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Agent Voice Calibration</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 mt-6 border-t border-slate-200 text-[11px] font-bold text-[#E85D04]">
-                Phase 2: Days 3 - 5
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-slate-50 rounded-3xl p-7 border border-slate-200/90 shadow-xs card-lift hover:border-orange-300 flex flex-col justify-between group">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl shadow-xs group-hover:bg-[#E85D04] group-hover:text-white transition-all">
-                    <i className="fa-solid fa-rocket"></i>
-                  </div>
-                  <span className="text-2xl font-black text-slate-300 group-hover:text-[#E85D04] transition-colors font-mono">
-                    03
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#E85D04] transition-colors">
-                  Pilot Squad & Live QA
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                  Controlled 30-day go-live with assigned floor supervisors, 100% call audio scoring, and daily conversion feedback.
-                </p>
-
-                <ul className="space-y-1.5 text-xs text-slate-600">
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Dedicated Squad Deployment</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Daily Call Scorecards</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Live Audio Whisper Coaching</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 mt-6 border-t border-slate-200 text-[11px] font-bold text-[#E85D04]">
-                Phase 3: Day 7 Go-Live
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="bg-slate-50 rounded-3xl p-7 border border-slate-200/90 shadow-xs card-lift hover:border-orange-300 flex flex-col justify-between group">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-50 text-[#E85D04] border border-orange-200 flex items-center justify-center text-xl shadow-xs group-hover:bg-[#E85D04] group-hover:text-white transition-all">
-                    <i className="fa-solid fa-chart-line"></i>
-                  </div>
-                  <span className="text-2xl font-black text-slate-300 group-hover:text-[#E85D04] transition-colors font-mono">
-                    04
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#E85D04] transition-colors">
-                  Scale & Performance ROI
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                  Scaling agent seat capacity, continuous script A/B testing, and weekly executive ROI dashboards.
-                </p>
-
-                <ul className="space-y-1.5 text-xs text-slate-600">
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Capacity Scaling to 50+ Seats</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>Weekly Executive ROI Sync</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <i className="fa-solid fa-check text-[#E85D04] text-[10px]"></i>
-                    <span>AI Lead Scoring Integration</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 mt-6 border-t border-slate-200 text-[11px] font-bold text-[#E85D04]">
-                Phase 4: Ongoing Velocity
-              </div>
-            </div>
-
-          </div>
-
-          {/* Process Guarantee Banner */}
-          <div className="mt-12 p-6 rounded-3xl bg-orange-50/60 border border-orange-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#E85D04] text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-xs">
-                <i className="fa-solid fa-shield-halved"></i>
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">30-Day Pilot Guarantee</h4>
-                <p className="text-xs text-slate-600">Test our dedicated offshore squads with zero long-term lock-in.</p>
-              </div>
-            </div>
-
-            <Link
-              href="/contact"
-              className="px-6 py-2.5 rounded-xl bg-[#E85D04] hover:bg-orange-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all whitespace-nowrap"
-            >
-              Initiate Discovery Call
-            </Link>
+            ))}
           </div>
 
         </div>
       </section>
 
-      {/* PRICING ESTIMATOR */}
-      <section id="calculator" className="py-24 bg-slate-50 border-t border-slate-200">
+
+      {/* ========================================================
+          6. PROJECT SCOPING & ESTIMATE CALCULATOR
+          ======================================================== */}
+      <section id="calculator" className="py-20 md:py-28 bg-slate-50 border-t border-slate-200/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="text-xs font-bold text-[#E85D04] uppercase tracking-widest block mb-2">
-              Instant Quote
+          
+          <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+            <span className="pill-badge">
+              <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
+              Project Estimator
             </span>
-            <h2 className="text-3xl font-extrabold text-slate-900">Project Scope & Pricing Estimator</h2>
-            <p className="text-slate-600 mt-2 text-sm">
-              Select your service and required scope to generate real-time estimates.
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Interactive Campaign Scoping
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500">
+              Select your required service and adjust the operational scale for an immediate scoping estimate.
             </p>
           </div>
 
-          <div className="sample-card rounded-2xl p-6 sm:p-10 bg-white">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              {/* Controls */}
-              <div className="lg:col-span-7 space-y-6">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      1. Select Required Service
-                    </label>
-                    {estimate.isCustomQuote && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#E85D04] border border-orange-200">
-                        Meeting Scoped
-                      </span>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setCalculatorService("bpo")}
-                      className={`calc-btn p-3 rounded-xl border font-semibold text-xs text-left flex items-center gap-2 cursor-pointer transition-all ${
-                        calculatorService === "bpo"
-                          ? "border-[#E85D04] bg-orange-50 text-slate-900 shadow-xs"
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <i className="fa-solid fa-headset text-[#E85D04]"></i> Outbound Call Squad
-                    </button>
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl space-y-8">
+            
+            {/* Service Toggle Pills */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { id: "bpo", label: "Call Centre (BPO)", icon: "fa-solid fa-headset" },
+                { id: "web", label: "Custom Software", icon: "fa-solid fa-code" },
+                { id: "ai", label: "AI Automation", icon: "fa-solid fa-robot" },
+                { id: "seo", label: "Local SEO (GMB)", icon: "fa-solid fa-location-dot" },
+              ].map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setCalculatorService(s.id)}
+                  className={`py-3 px-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    calculatorService === s.id
+                      ? "bg-slate-900 text-white shadow-md"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  <i className={s.icon}></i>
+                  <span>{s.label}</span>
+                </button>
+              ))}
+            </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setCalculatorService("web")}
-                      className={`calc-btn p-3 rounded-xl border font-semibold text-xs text-left flex items-center gap-2 cursor-pointer transition-all ${
-                        calculatorService === "web"
-                          ? "border-[#E85D04] bg-orange-50 text-slate-900 shadow-xs"
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <i className="fa-solid fa-code text-[#E85D04]"></i> Software & Web App
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setCalculatorService("ai")}
-                      className={`calc-btn p-3 rounded-xl border font-semibold text-xs text-left flex items-center gap-2 cursor-pointer transition-all ${
-                        calculatorService === "ai"
-                          ? "border-[#E85D04] bg-orange-50 text-slate-900 shadow-xs"
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <i className="fa-solid fa-robot text-[#E85D04]"></i> AI Automation
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setCalculatorService("seo")}
-                      className={`calc-btn p-3 rounded-xl border font-semibold text-xs text-left flex items-center gap-2 cursor-pointer transition-all ${
-                        calculatorService === "seo"
-                          ? "border-[#E85D04] bg-orange-50 text-slate-900 shadow-xs"
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <i className="fa-solid fa-chart-line text-[#E85D04]"></i> GMB SEO Management
-                    </button>
-                  </div>
-                </div>
-
-                {/* Scope Notice Banner when Software or AI is selected */}
-                {estimate.isCustomQuote && (
-                  <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50/60 border border-orange-200/90 text-xs text-slate-700 flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-orange-100 text-[#E85D04] flex items-center justify-center shrink-0 mt-0.5">
-                      <i className="fa-solid fa-handshake"></i>
-                    </div>
-                    <div className="leading-relaxed">
-                      <strong className="text-slate-900 block font-bold mb-0.5">
-                        Tailored Engineering & Deadline Scoping
-                      </strong>
-                      Custom software & applications cannot have a generic fixed price. Budget and milestone delivery schedules depend strictly on your feature set, database schema, third-party APIs, and launch deadline, which are determined in your discovery meeting.
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      2. {estimate.scaleTitle}
-                    </label>
-                    <span className="text-[#E85D04] font-mono font-bold text-xs sm:text-sm">
-                      {estimate.scaleLabel}
-                    </span>
-                  </div>
-
-                  <input
-                    type="range"
-                    min="1"
-                    max="3"
-                    value={calculatorScale}
-                    onChange={(e) => setCalculatorScale(parseInt(e.target.value))}
-                    className="w-full accent-[#E85D04] bg-slate-200 rounded-lg cursor-pointer h-2"
-                  />
-
-                  <div className="flex justify-between text-[11px] text-slate-500 mt-2 font-mono">
-                    <span className="text-left font-medium">{estimate.scaleMarks[0]}</span>
-                    <span className="text-center font-medium">{estimate.scaleMarks[1]}</span>
-                    <span className="text-right font-medium">{estimate.scaleMarks[2]}</span>
-                  </div>
-                </div>
+            {/* Scale Slider */}
+            <div className="space-y-4 pt-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-slate-700">{estimate.scaleTitle}</span>
+                <span className="font-black text-[#E85D04] px-3 py-1 rounded-full bg-orange-50 border border-orange-200">
+                  {estimate.scaleLabel}
+                </span>
               </div>
 
-              {/* Output Card */}
-              <div className="lg:col-span-5 bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl pointer-events-none"></div>
+              <input
+                type="range"
+                min="1"
+                max="3"
+                step="1"
+                value={calculatorScale}
+                onChange={(e) => setCalculatorScale(parseInt(e.target.value))}
+                className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#E85D04]"
+              />
 
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-mono text-slate-400 block uppercase tracking-wider">
-                      {estimate.isCustomQuote ? "Investment Model" : "Estimated Investment"}
-                    </span>
-                    {estimate.isCustomQuote ? (
-                      <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-[#E85D04] border border-[#E85D04]/40 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                        <i className="fa-solid fa-clock-rotate-left text-[9px]"></i> Meeting Scoped
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold uppercase tracking-wider">
-                        Monthly Retainer
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono my-2 tracking-tight">
-                    {estimate.costRange}
-                  </div>
-
-                  <div className="text-xs text-orange-400 font-medium mb-4 flex items-center gap-1.5">
-                    <i className="fa-solid fa-calendar-days"></i> {estimate.timeText}
-                  </div>
-
-                  {/* Scoping notice card */}
-                  <div className="p-3.5 my-3 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-slate-300">
-                    <div className="flex items-center gap-1.5 font-bold text-orange-400 mb-1 text-[11px] uppercase tracking-wider">
-                      <i className="fa-solid fa-circle-info"></i>
-                      <span>{estimate.isCustomQuote ? "Variable Scope Notice" : "Retainer Details"}</span>
-                    </div>
-                    <p className="text-[11px] leading-relaxed text-slate-300">
-                      {estimate.notice}
-                    </p>
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-800">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-2">
-                      Key Deliverables & Specifications:
-                    </span>
-                    <ul className="text-xs text-slate-300 space-y-2">
-                      {estimate.bullets.map((bullet, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <i className="fa-solid fa-check text-[#E85D04] mt-0.5"></i>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const serviceMap = {
-                      bpo: "Outbound Call Centre & Telemarketing",
-                      web: "Custom Software Development",
-                      ai: "AI Automation & CRM Integration",
-                      seo: "Google Business Profile SEO",
-                    };
-                    setFormData((prev) => ({
-                      ...prev,
-                      service: serviceMap[calculatorService] || prev.service,
-                      message: estimate.isCustomQuote
-                        ? `Hi Brainstorm, I'd like to book a scoping call for ${estimate.scaleLabel}. Please share available meeting slots.`
-                        : prev.message,
-                    }));
-                    const el = document.getElementById("contact");
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full mt-6 py-3.5 rounded-xl bg-[#E85D04] hover:bg-orange-600 text-white font-bold text-xs sm:text-sm text-center block shadow-lg shadow-orange-500/30 transition-all cursor-pointer uppercase tracking-wider"
-                >
-                  {estimate.isCustomQuote ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <i className="fa-solid fa-calendar-check"></i> Book Project Scoping Meeting
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      <i className="fa-solid fa-paper-plane"></i> Request Official Quote
-                    </span>
-                  )}
-                </button>
+              <div className="flex justify-between text-[11px] font-semibold text-slate-400">
+                {estimate.scaleMarks.map((m, mi) => (
+                  <span key={mi}>{m}</span>
+                ))}
               </div>
             </div>
+
+            {/* Estimate Summary Box */}
+            <div className="p-6 rounded-2xl bg-orange-50/50 border border-orange-200/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <div className="text-[11px] font-bold uppercase text-slate-500 tracking-wider">
+                  Indicative Monthly Retainer / Scope Tier
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                  {estimate.costRange}
+                </div>
+                <div className="text-xs text-slate-600 mt-1 flex items-center gap-2">
+                  <i className="fa-solid fa-users text-[#E85D04]"></i>
+                  <span>{estimate.timeText}</span>
+                </div>
+              </div>
+
+              <Link
+                href="/contact"
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#E85D04] to-orange-600 text-white font-bold text-xs uppercase tracking-wider hover:scale-105 active:scale-95 transition-all shadow-md shadow-orange-500/20 whitespace-nowrap"
+              >
+                Confirm Exact Budget →
+              </Link>
+            </div>
+
+            {/* Bullets & Disclaimer */}
+            <div className="space-y-3 pt-2">
+              <div className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Included in this tier:
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {estimate.bullets.map((b, bi) => (
+                  <div key={bi} className="flex items-start gap-2 text-xs text-slate-600">
+                    <i className="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                    <span>{b}</span>
+                  </div>
+                ))}
+              </div>
+
+              {estimate.notice && (
+                <p className="text-[11px] text-slate-500 italic mt-4 pt-3 border-t border-slate-200">
+                  {estimate.notice}
+                </p>
+              )}
+            </div>
+
           </div>
+
         </div>
       </section>
 
-      {/* CONTACT SECTION */}
-      <section id="contact" className="py-24 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Info */}
-            <div className="lg:col-span-5 space-y-8">
-              <div>
-                <span className="text-xs font-bold text-[#E85D04] uppercase tracking-widest block mb-2">
-                  Get In Touch
-                </span>
-                <h2 className="text-3xl font-extrabold text-slate-900">
-                  Contact Brainstorm Communications
-                </h2>
-                <p className="text-slate-600 mt-4 text-sm leading-relaxed">
-                  Brainstorm Communications engages in full project planning and setup. Reach out to discuss
-                  your software development or outbound call center requirements.
-                </p>
+
+      {/* ========================================================
+          7. CONTACT SECTION & MODAL (PREMIUM CURVED POD DESIGN)
+          ======================================================== */}
+      <section id="contact" className="py-20 md:py-28 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="relative rounded-[2.2rem] sm:rounded-[3rem] bg-[#080D18] text-white p-7 sm:p-12 md:p-16 border border-slate-800 shadow-2xl overflow-hidden">
+          
+          {/* Subtle Ambient Glow */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[#E85D04]/20 via-orange-600/10 to-transparent rounded-full blur-3xl pointer-events-none z-0 animate-pulse-glow"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            {/* Left Contact Info Column */}
+            <div className="lg:col-span-5 space-y-6">
+              <span className="pill-badge-dark">
+                <span className="w-2 h-2 rounded-full bg-[#E85D04]"></span>
+                Direct Liaison & Consultation
+              </span>
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
+                Let’s Connect & Scale Your Operations
+              </h2>
+
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Whether you need a dedicated outbound telemarketing squad, bespoke full-stack software development, or an AI automation audit, our senior leadership in Lahore is ready to assist you.
+              </p>
+
+              {/* 3 Highlight Cards */}
+              <div className="space-y-3.5 pt-2">
+                
+                {/* Card 1: Phone Hotline */}
+                <a
+                  href="tel:+923332556206"
+                  className="flex items-start gap-4 p-4.5 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-[#E85D04]/60 hover:bg-white/[0.07] transition-all card-lift-dark block group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-orange-500/20 text-[#E85D04] border border-orange-500/30 flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <i className="fa-solid fa-phone"></i>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      Direct Operations Line
+                    </div>
+                    <div className="text-base font-extrabold text-white group-hover:text-[#E85D04] transition-colors mt-0.5">
+                      +92 333 2556206
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      <span>24/7 English Voice Support</span>
+                    </div>
+                  </div>
+                </a>
+
+                {/* Card 2: Operations Center */}
+                <div className="flex items-start gap-4 p-4.5 rounded-2xl bg-white/[0.04] border border-white/10 card-lift-dark">
+                  <div className="w-11 h-11 rounded-xl bg-orange-500/20 text-[#E85D04] border border-orange-500/30 flex items-center justify-center text-lg flex-shrink-0">
+                    <i className="fa-solid fa-location-dot"></i>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      Technology & BPO Center
+                    </div>
+                    <div className="text-base font-extrabold text-white mt-0.5">
+                      Lahore, Punjab, Pakistan
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-1">
+                      US (EST/PST) & UK (GMT) Operational Shifts
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card 3: SLA & Security */}
+                <div className="flex items-start gap-4 p-4.5 rounded-2xl bg-white/[0.04] border border-white/10 card-lift-dark">
+                  <div className="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg flex-shrink-0">
+                    <i className="fa-solid fa-shield-halved"></i>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      Onboarding Speed & Compliance
+                    </div>
+                    <div className="text-sm font-extrabold text-white mt-0.5">
+                      Rapid 7-Day Dedicated Ramp-Up
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-1">
+                      Strict Mutual NDAs & SOC-Aligned Data Privacy
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E85D04] flex-shrink-0">
-                    <i className="fa-solid fa-location-dot text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-slate-900 font-bold text-sm">Headquarters & Call Center</h4>
-                    <p className="text-slate-600 text-xs mt-1">Lahore, Punjab, Pakistan</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E85D04] flex-shrink-0">
-                    <i className="fa-solid fa-phone text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-slate-900 font-bold text-sm">Direct Phone</h4>
-                    <p className="text-slate-600 text-xs mt-1">+92 42 35880000</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E85D04] flex-shrink-0">
-                    <i className="fa-solid fa-envelope text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-slate-900 font-bold text-sm">Email Address</h4>
-                    <p className="text-slate-600 text-xs mt-1">info@brainstormcommunications.org</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contact Logo Box with /logo.png */}
-              <div className="p-4 rounded-xl sample-card bg-slate-50 flex items-center space-x-4">
+              {/* Brand Logo Box - Image Only */}
+              <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner">
                 <img
                   src={LOGO_SRC}
                   alt="Brainstorm Logo"
                   className="h-12 w-auto object-contain"
                 />
-                <div className="text-xs text-slate-700">
-                  <div className="font-bold text-slate-900">Brainstorm Communications</div>
-                  <div className="text-slate-500">Software House & Call Centre • Founded 2006</div>
-                </div>
               </div>
             </div>
 
-            {/* Form */}
+            {/* Right Contact Form Column */}
             <div className="lg:col-span-7">
-              <div className="sample-card rounded-2xl p-8 bg-white shadow-xl">
-                <h3 className="text-xl font-bold text-slate-900 mb-6">Send Us A Message</h3>
+              <div className="rounded-3xl p-6 sm:p-9 bg-white/[0.04] border border-white/10 backdrop-blur-xl shadow-2xl space-y-6">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-white">
+                    Send Us A Direct Message
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Fill out the scoping form below. Our operations directors will reply within 2 business hours.
+                  </p>
+                </div>
 
                 <form onSubmit={handleFormSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Your Name *
                       </label>
                       <input
@@ -1175,11 +1045,11 @@ export default function Home() {
                         placeholder="John Doe"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:border-[#E85D04] outline-none"
+                        className="w-full bg-white/[0.06] border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-[#E85D04] focus:bg-white/[0.09] outline-none transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Email Address *
                       </label>
                       <input
@@ -1188,32 +1058,32 @@ export default function Home() {
                         placeholder="john@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:border-[#E85D04] outline-none"
+                        className="w-full bg-white/[0.06] border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-[#E85D04] focus:bg-white/[0.09] outline-none transition-all"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Phone Number
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                        Phone / WhatsApp (With Country Code)
                       </label>
                       <input
                         type="tel"
-                        placeholder="+92 300 0000000"
+                        placeholder="+1 (555) 000-0000"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:border-[#E85D04] outline-none"
+                        className="w-full bg-white/[0.06] border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-[#E85D04] focus:bg-white/[0.09] outline-none transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Service Required
                       </label>
                       <select
                         value={formData.service}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:border-[#E85D04] outline-none"
+                        className="w-full bg-slate-900 border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:border-[#E85D04] outline-none cursor-pointer"
                       >
                         <option value="Outbound Call Centre & Telemarketing">
                           Outbound Call Centre & Telemarketing
@@ -1224,71 +1094,85 @@ export default function Home() {
                         <option value="AI Automation & CRM Integration">
                           AI Automation & CRM Integration
                         </option>
-                        <option value="Google Business Profile SEO">
-                          Google Business Profile SEO
+                        <option value="BPO & Back-Office Support">
+                          BPO & Back-Office Support
                         </option>
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Project Details *
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Project Goals or Campaign Details *
                     </label>
                     <textarea
-                      required
                       rows={4}
-                      placeholder="Describe your software project or call center campaign requirement..."
+                      required
+                      placeholder="Briefly describe your requirements, targets, target time zones, and ideal kickoff timeline..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-900 focus:border-[#E85D04] outline-none"
+                      className="w-full bg-white/[0.06] border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-[#E85D04] focus:bg-white/[0.09] outline-none transition-all resize-none"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-xl bg-[#E85D04] hover:bg-orange-600 text-white font-bold text-sm shadow-md shadow-orange-500/20 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#E85D04] to-orange-600 hover:from-orange-600 hover:to-[#E85D04] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/25 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <i className="fa-solid fa-paper-plane"></i>
-                    <span>Submit Inquiry</span>
+                    <span>Submit Project Scoping Request</span>
+                    <i className="fa-solid fa-arrow-right text-xs"></i>
                   </button>
+
+                  <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <i className="fa-solid fa-lock text-emerald-400"></i>
+                      <span>100% Confidential • Protected by NDA</span>
+                    </span>
+                    <span>&lt; 2-Hour SLA Response</span>
+                  </div>
                 </form>
               </div>
             </div>
+
           </div>
+
         </div>
       </section>
 
-      {/* SUCCESS MODAL BOX */}
+      {/* CONFIRMATION MODAL */}
       {isModalOpen && (
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[999] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-4"
+            className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl">
               <i className="fa-solid fa-check"></i>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Message Received!</h3>
-            <p className="text-sm text-slate-600">
-              Thank you for contacting Brainstorm Communications. Our team in Lahore will review your inquiry and get
-              back to you within 24 hours.
+            <h3 className="text-xl font-extrabold text-slate-900">
+              Scoping Inquiry Received
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Thank you for contacting Brainstorm Communications. An executive operations lead at our Lahore center will review your targets and connect within 2 business hours.
             </p>
+            <div className="p-3 rounded-2xl bg-orange-50 border border-orange-200 text-xs text-slate-700">
+              <strong>Urgent Contact:</strong> +92 333 2556206
+            </div>
             <button
-              type="button"
               onClick={() => setIsModalOpen(false)}
-              className="w-full py-3 rounded-xl bg-[#E85D04] text-white font-bold text-sm hover:bg-orange-600 transition-colors cursor-pointer"
+              className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
             >
-              Close Window
+              Close
             </button>
           </div>
         </div>
       )}
+
     </div>
   );
 }

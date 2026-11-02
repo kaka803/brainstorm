@@ -102,14 +102,8 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <i className="fa-solid fa-phone text-[#E85D04]"></i>
-                <a href="tel:+924235880000" className="hover:text-white transition-colors">
-                  +92 42 35880000
-                </a>
-              </p>
-              <p className="flex items-center gap-2">
-                <i className="fa-solid fa-envelope text-[#E85D04]"></i>
-                <a href="mailto:info@brainstormcommunications.org" className="hover:text-white transition-colors">
-                  info@brainstormcommunications.org
+                <a href="tel:+923332556206" className="hover:text-white transition-colors">
+                  +92 333 2556206
                 </a>
               </p>
               <p className="flex items-center gap-2">

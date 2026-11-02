@@ -788,11 +788,11 @@ export default function AboutPage() {
             </a>
 
             <a
-              href="tel:+924235880000"
+              href="tel:+923332556206"
               className="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold text-sm backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
             >
               <i className="fa-solid fa-phone text-xs text-orange-400"></i>
-              <span>+92 42 35880000</span>
+              <span>+92 333 2556206</span>
             </a>
           </div>
 

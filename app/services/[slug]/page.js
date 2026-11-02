@@ -420,11 +420,11 @@ async function ServiceContent({ params }) {
             </Link>
 
             <a
-              href="tel:+924235880000"
+              href="tel:+923332556206"
               className="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold text-sm backdrop-blur-md transition-all flex items-center gap-2"
             >
               <i className="fa-solid fa-phone text-orange-400 text-xs"></i>
-              <span>+92 42 35880000</span>
+              <span>+92 333 2556206</span>
             </a>
           </div>
         </div>
